@@ -1,0 +1,216 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// ============================================
+// المستخدمين
+// ============================================
+model User {
+  id            String         @id @default(cuid())
+  email         String         @unique
+  password      String
+  name          String?
+  phone         String?
+  avatar        String?
+  level         String         @default("مبتدئ")
+  points        Int            @default(0)
+  role          String         @default("user")
+  emailVerified DateTime?
+  isActive      Boolean        @default(true)
+  stripeCustomerId String?
+  lastLogin     DateTime?
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  
+  userCertificates UserCertificate[]
+  payments         Payment[]
+  examAttempts     ExamAttempt[]
+  notifications    Notification[]
+  adminLogs        AdminLog[]
+}
+
+// ============================================
+// الشهادات
+// ============================================
+model Certificate {
+  id              String   @id @default(cuid())
+  title           String
+  titleEn         String
+  description     String
+  category        String
+  price           Float
+  originalPrice   Float
+  duration        String
+  level           String
+  skills          String
+  passingScore    Int      @default(70)
+  totalQuestions  Int
+  examDuration    Int
+  featured        Boolean  @default(false)
+  image           String?
+  isActive        Boolean  @default(true)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  
+  userCertificates UserCertificate[]
+  examAttempts     ExamAttempt[]
+}
+
+// ============================================
+// شهادات المستخدمين
+// ============================================
+model UserCertificate {
+  id              String     @id @default(cuid())
+  certificateId   String
+  userId          String
+  certificateNumber String   @unique
+  score           Int
+  status          String     @default("valid")
+  issueDate       DateTime   @default(now())
+  expiryDate      DateTime?
+  
+  certificate     Certificate @relation(fields: [certificateId], references: [id])
+  user            User        @relation(fields: [userId], references: [id])
+  paymentId       String?     @unique
+  payment         Payment?    @relation(fields: [paymentId], references: [id])
+  
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime   @updatedAt
+}
+
+// ============================================
+// المدفوعات
+// ============================================
+model Payment {
+  id              String   @id @default(cuid())
+  userId          String
+  certificateId   String?
+  amount          Float
+  currency        String   @default("USD")
+  status          String   @default("pending")
+  paymentMethod   String
+  stripePaymentId String?
+  stripeSessionId String?
+  paypalOrderId   String?
+  metadata        String?
+  
+  user            User     @relation(fields: [userId], references: [id])
+  userCertificate UserCertificate?
+  
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+// ============================================
+// محاولات الاختبارات
+// ============================================
+model ExamAttempt {
+  id              String   @id @default(cuid())
+  userId          String
+  certificateId   String
+  answers         String
+  score           Int
+  passed          Boolean
+  startedAt       DateTime @default(now())
+  completedAt     DateTime?
+  timeSpent       Int?
+  
+  user            User        @relation(fields: [userId], references: [id])
+  certificate     Certificate @relation(fields: [certificateId], references: [id])
+  
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+// ============================================
+// الأسئلة
+// ============================================
+model Question {
+  id              String   @id @default(cuid())
+  certificateId   String
+  question        String
+  options         String
+  correctAnswer   Int
+  explanation     String?
+  order           Int      @default(0)
+  isActive        Boolean  @default(true)
+  
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+// ============================================
+// كوبونات الخصم
+// ============================================
+model Coupon {
+  id              String   @id @default(cuid())
+  code            String   @unique
+  discountPercent Int?
+  discountAmount  Float?
+  maxUses         Int?
+  currentUses     Int      @default(0)
+  validFrom       DateTime @default(now())
+  validUntil      DateTime?
+  isActive        Boolean  @default(true)
+  
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+// ============================================
+// إعدادات المنصة
+// ============================================
+model Setting {
+  id        String   @id @default(cuid())
+  key       String   @unique
+  value     String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// ============================================
+// الإشعارات
+// ============================================
+model Notification {
+  id          String   @id @default(cuid())
+  userId      String
+  title       String
+  message     String
+  type        String
+  link        String?
+  data        String?
+  isRead      Boolean  @default(false)
+  readAt      DateTime?
+  
+  user        User     @relation(fields: [userId], references: [id])
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+// ============================================
+// سجل المشرف
+// ============================================
+model AdminLog {
+  id          String   @id @default(cuid())
+  adminId     String
+  action      String
+  model       String
+  recordId    String?
+  oldData     String?
+  newData     String?
+  ip          String?
+  userAgent   String?
+  
+  admin       User     @relation(fields: [adminId], references: [id])
+  
+  createdAt   DateTime @default(now())
+}
