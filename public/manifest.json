@@ -1,0 +1,42 @@
+{
+  "name": "ECERTIFPRO - شهادات لغة المرجع",
+  "short_name": "ECERTIFPRO",
+  "description": "المنصة الرسمية والوحيدة المرخصة لتقديم شهادات معتمدة في لغة المرجع - أول لغة برمجة AI-أصيلة بالعربية",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0f172a",
+  "theme_color": "#1e293b",
+  "orientation": "portrait-primary",
+  "lang": "ar",
+  "dir": "rtl",
+  "scope": "/",
+  "icons": [
+    {
+      "src": "/logo.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["education", "productivity", "utilities"],
+  "shortcuts": [
+    {
+      "name": "تعلم لغة المرجع",
+      "short_name": "التعلم",
+      "description": "ابدأ رحلة تعلم لغة المرجع",
+      "url": "/learn"
+    },
+    {
+      "name": "الشهادات",
+      "short_name": "الشهادات",
+      "description": "عرض شهاداتك المعتمدة",
+      "url": "/certificates"
+    },
+    {
+      "name": "التحقق من شهادة",
+      "short_name": "التحقق",
+      "description": "التحقق من صحة الشهادة",
+      "url": "/verify"
+    }
+  ]
+}
