@@ -2,8 +2,15 @@ import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
   title: 'تواصل معنا',
-  description: 'تواصل مع فريق ECERTIFPRO - المنصة الرسمية لشهادات لغة المرجع. نحن هنا للإجابة على استفساراتك.',
-  keywords: ['تواصل ECERTIFPRO', 'اتصل بنا', 'دعم فني', 'استفسار شهادات'],
+  description: 'تواصل مع فريق ECERTIFPRO - المنصة الرسمية لشهادات لغة المرجع. نحن هنا للإجابة على استفساراتك ومساعدتك في رحلة تعلمك.',
+  keywords: [
+    'تواصل ECERTIFPRO',
+    'اتصل بنا',
+    'دعم فني',
+    'استفسار شهادات',
+    'شراكة',
+    'لغة المرجع دعم',
+  ],
   authors: [{ name: 'رضوان دالي حمدوني' }],
   openGraph: {
     title: 'تواصل معنا | ECERTIFPRO',
@@ -16,11 +23,15 @@ export const metadata: Metadata = {
   twitter: {
     card: 'summary',
     title: 'تواصل معنا | ECERTIFPRO',
-    description: 'تواصل مع فريق ECERTIFPRO',
+    description: 'تواصل مع فريق ECERTIFPRO - المنصة الرسمية لشهادات لغة المرجع',
     creator: '@almarjaa_lang',
   },
   alternates: {
     canonical: '/contact',
+  },
+  robots: {
+    index: true,
+    follow: true,
   },
 }
 

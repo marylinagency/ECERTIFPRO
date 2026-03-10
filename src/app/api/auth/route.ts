@@ -54,6 +54,7 @@ export async function POST(request: Request) {
         },
       });
 
+      // إنشاء جلسة
       const session = {
         id: user.id,
         email: user.email,
@@ -80,6 +81,7 @@ export async function POST(request: Request) {
         );
       }
 
+      // البحث عن المستخدم
       const user = await db.user.findUnique({
         where: { email },
       });
@@ -91,6 +93,7 @@ export async function POST(request: Request) {
         );
       }
 
+      // التحقق من كلمة المرور
       const isValidPassword = await bcrypt.compare(password, user.password);
       
       if (!isValidPassword) {
@@ -100,6 +103,7 @@ export async function POST(request: Request) {
         );
       }
 
+      // تحديث آخر تسجيل دخول
       await db.user.update({
         where: { id: user.id },
         data: { lastLogin: new Date() },
@@ -155,6 +159,14 @@ export async function POST(request: Request) {
       return NextResponse.json({
         success: true,
         data: user,
+      });
+    }
+
+    // تسجيل الخروج
+    if (action === 'logout') {
+      return NextResponse.json({
+        success: true,
+        message: 'تم تسجيل الخروج بنجاح',
       });
     }
 

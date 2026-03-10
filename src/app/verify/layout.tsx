@@ -2,8 +2,16 @@ import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
   title: 'التحقق من الشهادة',
-  description: 'تحقق من صحة شهادات لغة المرجع - أدخل رقم الشهادة للتحقق من صحتها ومطابقتها للسجلات الرسمية.',
-  keywords: ['تحقق من الشهادة', 'التحقق من الشهادات', 'شهادة موثقة', 'verify certificate'],
+  description: 'تحقق من صحة شهادات لغة المرجع - أدخل رقم الشهادة للتحقق من صحتها ومطابقتها للسجلات الرسمية. نظام تحقق آمن وموثوق.',
+  keywords: [
+    'تحقق من الشهادة',
+    'التحقق من الشهادات',
+    'التصديق على الشهادة',
+    'شهادة موثقة',
+    'verify certificate',
+    'certificate verification',
+    'لغة المرجع تحقق',
+  ],
   authors: [{ name: 'رضوان دالي حمدوني' }],
   openGraph: {
     title: 'التحقق من الشهادة | ECERTIFPRO',
@@ -21,6 +29,10 @@ export const metadata: Metadata = {
   },
   alternates: {
     canonical: '/verify',
+  },
+  robots: {
+    index: true,
+    follow: true,
   },
 }
 

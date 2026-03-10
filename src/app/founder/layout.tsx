@@ -22,15 +22,28 @@ export const metadata: Metadata = {
     siteName: 'ECERTIFPRO',
     type: 'profile',
     locale: 'ar_SA',
+    images: [
+      {
+        url: '/founder-og.png',
+        width: 1200,
+        height: 630,
+        alt: 'رضوان دالي حمدوني - مؤسس لغة المرجع',
+      },
+    ],
   },
   twitter: {
     card: 'summary_large_image',
     title: 'المؤسس - رضوان دالي حمدوني | ECERTIFPRO',
     description: 'مخترع لغة المرجع - أول لغة برمجة AI-أصيلة بالعربية',
+    images: ['/founder-og.png'],
     creator: '@almarjaa_lang',
   },
   alternates: {
     canonical: '/founder',
+  },
+  robots: {
+    index: true,
+    follow: true,
   },
 }
 

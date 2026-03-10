@@ -25,25 +25,34 @@ export const metadata: Metadata = {
   
   // الكلمات المفتاحية
   keywords: [
+    // اللغة والبرمجة
     "لغة المرجع",
     "Al-Marjaa Language",
     "لغة برمجة عربية",
     "برمجة بالعربية",
     "أول لغة برمجة عربية",
     "لغة برمجة AI-أصيلة",
+    
+    // المنصة والشهادات
     "ECERTIFPRO",
     "شهادات معتمدة",
     "شهادات مهنية",
     "شهادات إلكترونية",
     "تصديق الشهادات",
     "التحقق من الشهادات",
+    
+    // التقنية
     "الذكاء الاصطناعي",
     "تعلم البرمجة",
     "تطوير البرمجيات",
     "Rust",
     "برمجة أنظمة",
+    
+    // المؤسس
     "رضوان دالي حمدوني",
     "Radhwen Daly Hamdouni",
+    
+    // العربية
     "تعلم البرمجة بالعربية",
     "دورات برمجة عربية",
     "شهادات برمجية عربية",
@@ -72,8 +81,9 @@ export const metadata: Metadata = {
   icons: {
     icon: [
       { url: "/logo.svg", type: "image/svg+xml" },
+      { url: "/favicon.ico", sizes: "any" },
     ],
-    apple: "/logo.svg",
+    apple: "/apple-touch-icon.png",
   },
   
   // Manifest
@@ -127,6 +137,12 @@ export const metadata: Metadata = {
   
   // التطبيق
   applicationName: "ECERTIFPRO",
+  appLinks: {
+    web: {
+      url: "https://ecertifpro.com",
+      should_fallback: true,
+    },
+  },
   
   // التنسيق
   formatDetection: {
@@ -138,6 +154,12 @@ export const metadata: Metadata = {
   // أخرى
   generator: "Next.js",
   referrer: "origin-when-cross-origin",
+  
+  // verification - يجب إضافتها عند التسجيل في هذه الخدمات
+  // verification: {
+  //   google: "google-site-verification-code",
+  //   yandex: "yandex-verification-code",
+  // },
 };
 
 // JSON-LD Structured Data
@@ -177,6 +199,11 @@ const jsonLd = {
         "https://github.com/radhwendalyhamdouni/ECERTIFPRO",
         "https://github.com/radhwendalyhamdouni/Al-Marjaa-Language",
       ],
+      "contactPoint": {
+        "@type": "ContactPoint",
+        "contactType": "customer service",
+        "availableLanguage": ["Arabic", "English"],
+      },
     },
     {
       "@type": "Person",
@@ -213,6 +240,7 @@ const jsonLd = {
         "@id": "https://ecertifpro.com/#founder",
       },
       "inLanguage": "ar",
+      "license": "Open Source",
     },
     {
       "@type": "EducationalOrganization",
@@ -221,6 +249,26 @@ const jsonLd = {
       "description": "منصة تعليمية للحصول على شهادات معتمدة في لغة المرجع",
       "url": "https://ecertifpro.com/learn",
       "educationalLevel": "Beginner to Advanced",
+      "hasCredential": {
+        "@type": "EducationalOccupationalCredential",
+        "credentialCategory": "Professional Certificate",
+        "recognizedBy": {
+          "@id": "https://ecertifpro.com/#founder",
+        },
+      },
+    },
+    {
+      "@type": "WebPage",
+      "@id": "https://ecertifpro.com/#webpage",
+      "url": "https://ecertifpro.com",
+      "name": "ECERTIFPRO - المنصة الرسمية لشهادات لغة المرجع",
+      "isPartOf": {
+        "@id": "https://ecertifpro.com/#website",
+      },
+      "about": {
+        "@id": "https://ecertifpro.com/#almarjaa-language",
+      },
+      "inLanguage": "ar",
     },
   ],
 };
@@ -290,6 +338,9 @@ export default function RootLayout({
         
         {/* Language */}
         <meta httpEquiv="content-language" content="ar" />
+        
+        {/* Cache Control for dynamic content */}
+        <meta httpEquiv="Cache-Control" content="public, max-age=3600, must-revalidate" />
       </head>
       <body
         className={`${tajawal.variable} ${notoKufi.variable} font-sans antialiased bg-background text-foreground`}

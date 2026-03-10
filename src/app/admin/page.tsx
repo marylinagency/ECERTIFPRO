@@ -1,328 +1,353 @@
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
-import Link from 'next/link';
-import {
-  LayoutDashboard,
-  Users,
-  Award,
-  CreditCard,
-  MessageSquare,
-  Settings,
-  Search,
-  Bell,
-  LogOut,
-  Menu,
-  X,
-  ChevronLeft,
-  Shield,
-  Globe,
-  TrendingUp,
-  Database,
-  Zap
-} from 'lucide-react';
+import { useState, useEffect } from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Progress } from "@/components/ui/progress";
+import { 
+  Award, Users, CreditCard, BarChart3, Settings,
+  ChevronLeft, LogOut, LayoutDashboard, Shield,
+  TrendingUp, Clock, CheckCircle2, AlertCircle,
+  Menu, X, MessageSquare
+} from "lucide-react";
 
-interface AdminUser {
-  id: string;
-  name: string;
-  email: string;
-  role: string;
+// Admin user check
+const ADMIN_EMAILS = [
+  "almarjaa.project@hotmail.com",
+  "admin@ecertifpro.com",
+  "demo@ecertifpro.com", // للتجربة
+];
+
+interface Stat {
+  title: string;
+  value: string | number;
+  change?: string;
+  icon: typeof Award;
+  color: string;
 }
 
-interface Stats {
-  users: number;
-  certificates: number;
-  payments: number;
-  revenue: number;
-}
-
-export default function AdminPage() {
+export default function AdminDashboard() {
   const router = useRouter();
-  const [user, setUser] = useState<AdminUser | null>(null);
-  const [stats, setStats] = useState<Stats>({ users: 0, certificates: 0, payments: 0, revenue: 0 });
   const [sidebarOpen, setSidebarOpen] = useState(true);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    checkAuth();
-    fetchStats();
-  }, []);
-
-  const checkAuth = async () => {
-    try {
-      const res = await fetch('/api/auth/me');
-      const data = await res.json();
-      if (!data.user || data.user.role !== 'admin') {
-        router.push('/auth/login');
-        return;
-      }
-      setUser(data.user);
-    } catch {
-      router.push('/auth/login');
-    } finally {
-      setLoading(false);
+  
+  // الحصول على المستخدم من localStorage عند التحميل
+  const [user] = useState<any>(() => {
+    if (typeof window !== 'undefined') {
+      const storedUser = localStorage.getItem("ecertifpro_user");
+      return storedUser ? JSON.parse(storedUser) : null;
     }
-  };
+    return null;
+  });
 
-  const fetchStats = async () => {
-    try {
-      const res = await fetch('/api/admin/stats');
-      const data = await res.json();
-      if (data.stats) {
-        setStats(data.stats);
-      }
-    } catch (error) {
-      console.error('Error fetching stats:', error);
-    }
-  };
-
-  const handleLogout = async () => {
-    await fetch('/api/auth/logout', { method: 'POST' });
-    router.push('/auth/login');
-  };
-
-  const menuItems = [
-    { icon: LayoutDashboard, label: 'لوحة التحكم', href: '/admin', active: true },
-    { icon: Users, label: 'المستخدمين', href: '/admin/users' },
-    { icon: Award, label: 'الشهادات', href: '/admin/certificates' },
-    { icon: CreditCard, label: 'المدفوعات', href: '/admin/payments' },
-    { icon: MessageSquare, label: 'الرسائل', href: '/admin/messages' },
-    { icon: Globe, label: 'SEO محركات البحث', href: '/admin/seo' },
-    { icon: Settings, label: 'الإعدادات', href: '/admin/settings' },
-  ];
-
-  if (loading) {
+  // التحقق من صلاحيات المشرف
+  const isAdmin = user && ADMIN_EMAILS.includes(user.email);
+  
+  // إذا لم يكن مشرفاً، نعرض رسالة
+  if (!user || !isAdmin) {
     return (
-      <div className="min-h-screen bg-slate-900 flex items-center justify-center">
-        <div className="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin" />
+      <div className="min-h-screen flex items-center justify-center bg-muted/30">
+        <Card className="max-w-md w-full mx-4">
+          <CardContent className="pt-6 text-center">
+            <Shield className="w-16 h-16 text-destructive mx-auto mb-4" />
+            <h2 className="text-2xl font-bold mb-2">غير مصرح</h2>
+            <p className="text-muted-foreground mb-4">
+              ليس لديك صلاحية للوصول إلى هذه الصفحة
+            </p>
+            <Button onClick={() => router.push("/dashboard")}>
+              العودة للوحة التحكم
+            </Button>
+          </CardContent>
+        </Card>
       </div>
     );
   }
 
+  const stats: Stat[] = [
+    {
+      title: "إجمالي المستخدمين",
+      value: 1247,
+      change: "+12%",
+      icon: Users,
+      color: "text-blue-500",
+    },
+    {
+      title: "الشهادات المصدرة",
+      value: 389,
+      change: "+8%",
+      icon: Award,
+      color: "text-yellow-500",
+    },
+    {
+      title: "الإيرادات",
+      value: "$45,230",
+      change: "+23%",
+      icon: CreditCard,
+      color: "text-green-500",
+    },
+    {
+      title: "معدل النجاح",
+      value: "87%",
+      change: "+5%",
+      icon: TrendingUp,
+      color: "text-purple-500",
+    },
+  ];
+
+  const recentPayments = [
+    { id: 1, user: "أحمد محمد", certificate: "مطور Al-Marjaa", amount: 199, status: "completed", date: "2024-03-18" },
+    { id: 2, user: "سارة عبدالله", certificate: "خبير AI", amount: 299, status: "completed", date: "2024-03-18" },
+    { id: 3, user: "خالد إبراهيم", certificate: "مطور ويب", amount: 249, status: "pending", date: "2024-03-17" },
+    { id: 4, user: "نورة سالم", certificate: "محلل بيانات", amount: 279, status: "completed", date: "2024-03-17" },
+    { id: 5, user: "محمد علي", certificate: "أمن سيبراني", amount: 349, status: "completed", date: "2024-03-16" },
+  ];
+
+  const recentCertificates = [
+    { id: "ECERT-2024-ABC123", user: "أحمد محمد", certificate: "مطور Al-Marjaa", score: 92, date: "2024-03-18" },
+    { id: "ECERT-2024-DEF456", user: "سارة عبدالله", certificate: "خبير AI", score: 85, date: "2024-03-18" },
+    { id: "ECERT-2024-GHI789", user: "خالد إبراهيم", certificate: "مطور ويب", score: 78, date: "2024-03-17" },
+  ];
+
+  const menuItems = [
+    { icon: LayoutDashboard, label: "لوحة التحكم", href: "/admin", active: true },
+    { icon: Users, label: "المستخدمين", href: "/admin/users" },
+    { icon: Award, label: "الشهادات", href: "/admin/certificates" },
+    { icon: CreditCard, label: "المدفوعات", href: "/admin/payments" },
+    { icon: BarChart3, label: "التقارير", href: "/admin/reports" },
+    { icon: MessageSquare, label: "الرسائل", href: "/admin/messages" },
+    { icon: Settings, label: "الإعدادات", href: "/admin/settings" },
+  ];
+
+  const handleLogout = () => {
+    localStorage.removeItem("ecertifpro_user");
+    router.push("/");
+  };
+
   return (
-    <div className="min-h-screen bg-slate-900 text-white flex" dir="rtl">
+    <div className="min-h-screen bg-muted/30 flex">
       {/* Sidebar */}
-      <aside className={`${sidebarOpen ? 'w-64' : 'w-20'} bg-slate-800 border-l border-slate-700 transition-all duration-300 flex flex-col`}>
+      <aside className={`${sidebarOpen ? "w-64" : "w-20"} bg-primary text-white transition-all duration-300 flex flex-col`}>
         {/* Logo */}
-        <div className="p-4 border-b border-slate-700">
-          <Link href="/" className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center">
-              <Shield className="w-6 h-6 text-white" />
+        <div className="p-4 border-b border-white/10">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-lg gold-accent flex items-center justify-center">
+              <Shield className="w-6 h-6 text-primary" />
             </div>
             {sidebarOpen && (
-              <span className="font-bold text-lg">ECERTIFPRO</span>
+              <div>
+                <h1 className="font-bold">ECERTIFPRO</h1>
+                <p className="text-xs text-blue-200">لوحة المشرف</p>
+              </div>
             )}
-          </Link>
+          </div>
         </div>
 
         {/* Menu */}
         <nav className="flex-1 p-4 space-y-2">
           {menuItems.map((item, index) => (
-            <Link
-              key={index}
-              href={item.href}
-              className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${
-                item.active
-                  ? 'bg-blue-600 text-white'
-                  : 'text-slate-400 hover:bg-slate-700 hover:text-white'
-              }`}
-            >
-              <item.icon className="w-5 h-5" />
-              {sidebarOpen && <span>{item.label}</span>}
+            <Link key={index} href={item.href}>
+              <div className={`flex items-center gap-3 p-3 rounded-lg transition-colors ${
+                item.active ? "bg-white/20 text-white" : "text-blue-200 hover:bg-white/10"
+              }`}>
+                <item.icon className="w-5 h-5" />
+                {sidebarOpen && <span>{item.label}</span>}
+              </div>
             </Link>
           ))}
         </nav>
 
-        {/* Toggle */}
-        <button
-          onClick={() => setSidebarOpen(!sidebarOpen)}
-          className="p-4 border-t border-slate-700 flex items-center justify-center text-slate-400 hover:text-white transition-colors"
-        >
-          <ChevronLeft className={`w-5 h-5 transition-transform ${sidebarOpen ? '' : 'rotate-180'}`} />
-        </button>
+        {/* User */}
+        <div className="p-4 border-t border-white/10">
+          {sidebarOpen ? (
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center">
+                  <span className="font-bold">م</span>
+                </div>
+                <div>
+                  <p className="font-medium text-sm">{user?.name || "المشرف"}</p>
+                  <p className="text-xs text-blue-200">مدير النظام</p>
+                </div>
+              </div>
+              <button onClick={handleLogout} className="p-2 hover:bg-white/10 rounded-lg">
+                <LogOut className="w-5 h-5" />
+              </button>
+            </div>
+          ) : (
+            <button onClick={handleLogout} className="p-2 hover:bg-white/10 rounded-lg w-full flex justify-center">
+              <LogOut className="w-5 h-5" />
+            </button>
+          )}
+        </div>
       </aside>
 
       {/* Main Content */}
-      <div className="flex-1 flex flex-col">
+      <main className="flex-1">
         {/* Header */}
-        <header className="bg-slate-800/50 border-b border-slate-700 px-6 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <button
-                onClick={() => setSidebarOpen(!sidebarOpen)}
-                className="lg:hidden text-slate-400 hover:text-white"
-              >
-                <Menu className="w-6 h-6" />
-              </button>
-              <h1 className="text-2xl font-bold">لوحة التحكم</h1>
+        <header className="bg-background border-b p-4 flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <button
+              onClick={() => setSidebarOpen(!sidebarOpen)}
+              className="p-2 hover:bg-muted rounded-lg"
+            >
+              {sidebarOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+            </button>
+            <div>
+              <h1 className="text-xl font-bold">لوحة تحكم المشرف</h1>
+              <p className="text-sm text-muted-foreground">مرحباً، {user?.name || "المشرف"}</p>
             </div>
-            
-            <div className="flex items-center gap-4">
-              <button className="relative text-slate-400 hover:text-white transition-colors">
-                <Bell className="w-5 h-5" />
-                <span className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 rounded-full text-xs flex items-center justify-center">
-                  3
-                </span>
-              </button>
-              
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
-                  <span className="font-bold">{user?.name?.charAt(0) || 'A'}</span>
-                </div>
-                <div className="hidden md:block">
-                  <p className="font-medium">{user?.name}</p>
-                  <p className="text-xs text-slate-400">{user?.role}</p>
-                </div>
-                <button
-                  onClick={handleLogout}
-                  className="text-slate-400 hover:text-red-400 transition-colors"
-                >
-                  <LogOut className="w-5 h-5" />
-                </button>
-              </div>
-            </div>
+          </div>
+
+          <div className="flex items-center gap-4">
+            <Button variant="outline" size="sm" asChild>
+              <Link href="/">
+                <ChevronLeft className="w-4 h-4 mr-1" />
+                الموقع
+              </Link>
+            </Button>
           </div>
         </header>
 
         {/* Content */}
-        <main className="flex-1 p-6 overflow-auto">
-          {/* Stats Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-            <div className="bg-slate-800 rounded-2xl p-6 border border-slate-700">
-              <div className="flex items-center justify-between mb-4">
-                <div className="w-12 h-12 bg-blue-500/20 rounded-xl flex items-center justify-center">
-                  <Users className="w-6 h-6 text-blue-400" />
-                </div>
-                <span className="text-green-400 text-sm flex items-center gap-1">
-                  <TrendingUp className="w-4 h-4" />
-                  +12%
-                </span>
-              </div>
-              <h3 className="text-3xl font-bold mb-1">{stats.users}</h3>
-              <p className="text-slate-400">المستخدمين</p>
-            </div>
+        <div className="p-6">
+          {/* Stats */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+            {stats.map((stat, index) => (
+              <Card key={index}>
+                <CardContent className="pt-6">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm text-muted-foreground">{stat.title}</p>
+                      <p className="text-2xl font-bold mt-1">{stat.value}</p>
+                      {stat.change && (
+                        <p className="text-sm text-green-500 mt-1">{stat.change}</p>
+                      )}
+                    </div>
+                    <div className={`w-12 h-12 rounded-full bg-muted flex items-center justify-center ${stat.color}`}>
+                      <stat.icon className="w-6 h-6" />
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
 
-            <div className="bg-slate-800 rounded-2xl p-6 border border-slate-700">
-              <div className="flex items-center justify-between mb-4">
-                <div className="w-12 h-12 bg-purple-500/20 rounded-xl flex items-center justify-center">
-                  <Award className="w-6 h-6 text-purple-400" />
+          {/* Charts & Tables */}
+          <div className="grid lg:grid-cols-2 gap-6">
+            {/* Recent Payments */}
+            <Card>
+              <CardHeader>
+                <div className="flex items-center justify-between">
+                  <CardTitle className="flex items-center gap-2">
+                    <CreditCard className="w-5 h-5 text-primary" />
+                    آخر المدفوعات
+                  </CardTitle>
+                  <Button variant="outline" size="sm" asChild>
+                    <Link href="/admin/payments">عرض الكل</Link>
+                  </Button>
                 </div>
-                <span className="text-green-400 text-sm flex items-center gap-1">
-                  <TrendingUp className="w-4 h-4" />
-                  +8%
-                </span>
-              </div>
-              <h3 className="text-3xl font-bold mb-1">{stats.certificates}</h3>
-              <p className="text-slate-400">شهادة صادرة</p>
-            </div>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  {recentPayments.map((payment) => (
+                    <div key={payment.id} className="flex items-center justify-between p-3 bg-muted/50 rounded-lg">
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-full hero-gradient flex items-center justify-center text-white font-bold">
+                          {payment.user.charAt(0)}
+                        </div>
+                        <div>
+                          <p className="font-medium">{payment.user}</p>
+                          <p className="text-sm text-muted-foreground">{payment.certificate}</p>
+                        </div>
+                      </div>
+                      <div className="text-left">
+                        <p className="font-bold">${payment.amount}</p>
+                        <Badge className={payment.status === "completed" ? "bg-green-500 text-white" : "bg-yellow-500 text-white"}>
+                          {payment.status === "completed" ? "مكتمل" : "قيد الانتظار"}
+                        </Badge>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
 
-            <div className="bg-slate-800 rounded-2xl p-6 border border-slate-700">
-              <div className="flex items-center justify-between mb-4">
-                <div className="w-12 h-12 bg-green-500/20 rounded-xl flex items-center justify-center">
-                  <CreditCard className="w-6 h-6 text-green-400" />
+            {/* Recent Certificates */}
+            <Card>
+              <CardHeader>
+                <div className="flex items-center justify-between">
+                  <CardTitle className="flex items-center gap-2">
+                    <Award className="w-5 h-5 text-yellow-500" />
+                    آخر الشهادات المصدرة
+                  </CardTitle>
+                  <Button variant="outline" size="sm" asChild>
+                    <Link href="/admin/certificates">عرض الكل</Link>
+                  </Button>
                 </div>
-                <span className="text-green-400 text-sm flex items-center gap-1">
-                  <TrendingUp className="w-4 h-4" />
-                  +23%
-                </span>
-              </div>
-              <h3 className="text-3xl font-bold mb-1">{stats.payments}</h3>
-              <p className="text-slate-400">عملية دفع</p>
-            </div>
-
-            <div className="bg-slate-800 rounded-2xl p-6 border border-slate-700">
-              <div className="flex items-center justify-between mb-4">
-                <div className="w-12 h-12 bg-yellow-500/20 rounded-xl flex items-center justify-center">
-                  <Database className="w-6 h-6 text-yellow-400" />
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  {recentCertificates.map((cert) => (
+                    <div key={cert.id} className="flex items-center justify-between p-3 bg-muted/50 rounded-lg">
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-full gold-accent flex items-center justify-center">
+                          <Award className="w-5 h-5 text-primary" />
+                        </div>
+                        <div>
+                          <p className="font-medium">{cert.user}</p>
+                          <p className="text-sm text-muted-foreground">{cert.certificate}</p>
+                        </div>
+                      </div>
+                      <div className="text-left">
+                        <p className="font-bold text-green-500">{cert.score}%</p>
+                        <p className="text-xs font-mono text-muted-foreground">{cert.id}</p>
+                      </div>
+                    </div>
+                  ))}
                 </div>
-                <span className="text-green-400 text-sm flex items-center gap-1">
-                  <TrendingUp className="w-4 h-4" />
-                  +15%
-                </span>
-              </div>
-              <h3 className="text-3xl font-bold mb-1">${stats.revenue.toLocaleString()}</h3>
-              <p className="text-slate-400">إجمالي الإيرادات</p>
-            </div>
+              </CardContent>
+            </Card>
           </div>
 
           {/* Quick Actions */}
-          <div className="bg-slate-800 rounded-2xl p-6 border border-slate-700 mb-8">
-            <h2 className="text-xl font-bold mb-6">إجراءات سريعة</h2>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              <Link
-                href="/admin/users"
-                className="flex flex-col items-center gap-3 p-4 bg-slate-700/50 rounded-xl hover:bg-slate-700 transition-colors"
-              >
-                <Users className="w-8 h-8 text-blue-400" />
-                <span className="text-sm">إدارة المستخدمين</span>
-              </Link>
-              <Link
-                href="/admin/certificates"
-                className="flex flex-col items-center gap-3 p-4 bg-slate-700/50 rounded-xl hover:bg-slate-700 transition-colors"
-              >
-                <Award className="w-8 h-8 text-purple-400" />
-                <span className="text-sm">إدارة الشهادات</span>
-              </Link>
-              <Link
-                href="/admin/seo"
-                className="flex flex-col items-center gap-3 p-4 bg-slate-700/50 rounded-xl hover:bg-slate-700 transition-colors"
-              >
-                <Globe className="w-8 h-8 text-green-400" />
-                <span className="text-sm">SEO محركات البحث</span>
-              </Link>
-              <Link
-                href="/admin/settings"
-                className="flex flex-col items-center gap-3 p-4 bg-slate-700/50 rounded-xl hover:bg-slate-700 transition-colors"
-              >
-                <Settings className="w-8 h-8 text-yellow-400" />
-                <span className="text-sm">الإعدادات</span>
-              </Link>
-            </div>
-          </div>
-
-          {/* AI & SEO Status */}
-          <div className="grid md:grid-cols-2 gap-6">
-            <div className="bg-gradient-to-br from-blue-900/50 to-purple-900/50 rounded-2xl p-6 border border-blue-500/30">
-              <div className="flex items-center gap-3 mb-4">
-                <Zap className="w-8 h-8 text-blue-400" />
-                <h2 className="text-xl font-bold">الذكاء الاصطناعي</h2>
+          <Card className="mt-6">
+            <CardHeader>
+              <CardTitle>إجراءات سريعة</CardTitle>
+              <CardDescription>إدارة سريعة للمنصة</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <Button variant="outline" className="h-20 flex-col gap-2" asChild>
+                  <Link href="/admin/users">
+                    <Users className="w-6 h-6" />
+                    <span>إدارة المستخدمين</span>
+                  </Link>
+                </Button>
+                <Button variant="outline" className="h-20 flex-col gap-2" asChild>
+                  <Link href="/admin/certificates">
+                    <Award className="w-6 h-6" />
+                    <span>إدارة الشهادات</span>
+                  </Link>
+                </Button>
+                <Button variant="outline" className="h-20 flex-col gap-2" asChild>
+                  <Link href="/admin/payments">
+                    <CreditCard className="w-6 h-6" />
+                    <span>عرض المدفوعات</span>
+                  </Link>
+                </Button>
+                <Button variant="outline" className="h-20 flex-col gap-2" asChild>
+                  <Link href="/admin/settings">
+                    <Settings className="w-6 h-6" />
+                    <span>الإعدادات</span>
+                  </Link>
+                </Button>
               </div>
-              <p className="text-slate-300 mb-4">
-                الموقع مُحسّن للظهور في ردود الذكاء الاصطناعي (AI Overviews) مع بيانات منظمة JSON-LD.
-              </p>
-              <div className="flex flex-wrap gap-2">
-                <span className="px-3 py-1 bg-green-500/20 text-green-400 rounded-full text-sm">
-                  ChatGPT ✓
-                </span>
-                <span className="px-3 py-1 bg-green-500/20 text-green-400 rounded-full text-sm">
-                  Claude ✓
-                </span>
-                <span className="px-3 py-1 bg-green-500/20 text-green-400 rounded-full text-sm">
-                  Google AI ✓
-                </span>
-              </div>
-            </div>
-
-            <div className="bg-gradient-to-br from-green-900/50 to-emerald-900/50 rounded-2xl p-6 border border-green-500/30">
-              <div className="flex items-center gap-3 mb-4">
-                <Globe className="w-8 h-8 text-green-400" />
-                <h2 className="text-xl font-bold">محركات البحث</h2>
-              </div>
-              <p className="text-slate-300 mb-4">
-                الموقع مُجهز بـ sitemap و robots.txt و Open Graph للتواصل الاجتماعي.
-              </p>
-              <Link
-                href="/admin/seo"
-                className="inline-flex items-center gap-2 px-4 py-2 bg-green-600 hover:bg-green-500 rounded-lg transition-colors"
-              >
-                <Settings className="w-4 h-4" />
-                إدارة SEO
-              </Link>
-            </div>
-          </div>
-        </main>
-      </div>
+            </CardContent>
+          </Card>
+        </div>
+      </main>
     </div>
   );
 }

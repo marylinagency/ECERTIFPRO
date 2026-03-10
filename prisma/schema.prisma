@@ -6,8 +6,8 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
-  url      = env("DATABASE_URL")
+  provider  = "sqlite"
+  url       = env("DATABASE_URL")
 }
 
 // ============================================
@@ -16,13 +16,13 @@ datasource db {
 model User {
   id            String         @id @default(cuid())
   email         String         @unique
-  password      String
+  password      String         // hashed password
   name          String?
   phone         String?
   avatar        String?
   level         String         @default("مبتدئ")
   points        Int            @default(0)
-  role          String         @default("user")
+  role          String         @default("user") // user, admin
   emailVerified DateTime?
   isActive      Boolean        @default(true)
   stripeCustomerId String?
@@ -35,6 +35,7 @@ model User {
   examAttempts     ExamAttempt[]
   notifications    Notification[]
   adminLogs        AdminLog[]
+  userBadges       UserBadge[]
 }
 
 // ============================================
@@ -43,25 +44,27 @@ model User {
 model Certificate {
   id              String   @id @default(cuid())
   title           String
-  titleEn         String
+  titleEn         String   @map("title_en")
   description     String
   category        String
   price           Float
-  originalPrice   Float
+  originalPrice   Float    @map("original_price")
   duration        String
-  level           String
-  skills          String
-  passingScore    Int      @default(70)
-  totalQuestions  Int
-  examDuration    Int
+  level           String   // مبتدئ, متوسط, متقدم, خبير
+  skills          String   // JSON array
+  passingScore    Int      @default(70) @map("passing_score")
+  totalQuestions  Int      @map("total_questions")
+  examDuration    Int      @map("exam_duration") // بالدقائق
   featured        Boolean  @default(false)
   image           String?
-  isActive        Boolean  @default(true)
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
+  isActive        Boolean  @default(true) @map("is_active")
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
   
   userCertificates UserCertificate[]
   examAttempts     ExamAttempt[]
+
+  @@map("certificates")
 }
 
 // ============================================
@@ -69,21 +72,23 @@ model Certificate {
 // ============================================
 model UserCertificate {
   id              String     @id @default(cuid())
-  certificateId   String
-  userId          String
-  certificateNumber String   @unique
+  certificateId   String     @map("certificate_id")
+  userId          String     @map("user_id")
+  certificateNumber String   @unique @map("certificate_number")
   score           Int
-  status          String     @default("valid")
-  issueDate       DateTime   @default(now())
-  expiryDate      DateTime?
+  status          String     @default("valid") // valid, expired, revoked
+  issueDate       DateTime   @default(now()) @map("issue_date")
+  expiryDate      DateTime?  @map("expiry_date")
   
   certificate     Certificate @relation(fields: [certificateId], references: [id])
   user            User        @relation(fields: [userId], references: [id])
-  paymentId       String?     @unique
+  paymentId       String?     @unique @map("payment_id")
   payment         Payment?    @relation(fields: [paymentId], references: [id])
   
-  createdAt       DateTime   @default(now())
-  updatedAt       DateTime   @updatedAt
+  createdAt       DateTime   @default(now()) @map("created_at")
+  updatedAt       DateTime   @updatedAt @map("updated_at")
+
+  @@map("user_certificates")
 }
 
 // ============================================
@@ -91,22 +96,24 @@ model UserCertificate {
 // ============================================
 model Payment {
   id              String   @id @default(cuid())
-  userId          String
-  certificateId   String?
+  userId          String   @map("user_id")
+  certificateId   String?  @map("certificate_id")
   amount          Float
   currency        String   @default("USD")
-  status          String   @default("pending")
-  paymentMethod   String
-  stripePaymentId String?
-  stripeSessionId String?
-  paypalOrderId   String?
-  metadata        String?
+  status          String   @default("pending") // pending, completed, failed, refunded
+  paymentMethod   String   @map("payment_method") // stripe, paypal
+  stripePaymentId String?  @map("stripe_payment_id")
+  stripeSessionId String?  @map("stripe_session_id")
+  paypalOrderId   String?  @map("paypal_order_id")
+  metadata        String?  // JSON for additional data
   
   user            User     @relation(fields: [userId], references: [id])
   userCertificate UserCertificate?
   
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+
+  @@map("payments")
 }
 
 // ============================================
@@ -114,20 +121,22 @@ model Payment {
 // ============================================
 model ExamAttempt {
   id              String   @id @default(cuid())
-  userId          String
-  certificateId   String
-  answers         String
+  userId          String   @map("user_id")
+  certificateId   String   @map("certificate_id")
+  answers         String   // JSON array of answers
   score           Int
   passed          Boolean
-  startedAt       DateTime @default(now())
-  completedAt     DateTime?
-  timeSpent       Int?
+  startedAt       DateTime @default(now()) @map("started_at")
+  completedAt     DateTime? @map("completed_at")
+  timeSpent       Int?     @map("time_spent") // بالثواني
   
   user            User        @relation(fields: [userId], references: [id])
   certificate     Certificate @relation(fields: [certificateId], references: [id])
   
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+
+  @@map("exam_attempts")
 }
 
 // ============================================
@@ -135,16 +144,18 @@ model ExamAttempt {
 // ============================================
 model Question {
   id              String   @id @default(cuid())
-  certificateId   String
+  certificateId   String   @map("certificate_id")
   question        String
-  options         String
-  correctAnswer   Int
+  options         String   // JSON array
+  correctAnswer   Int      @map("correct_answer") // index of correct option
   explanation     String?
   order           Int      @default(0)
-  isActive        Boolean  @default(true)
+  isActive        Boolean  @default(true) @map("is_active")
   
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+
+  @@map("questions")
 }
 
 // ============================================
@@ -153,16 +164,18 @@ model Question {
 model Coupon {
   id              String   @id @default(cuid())
   code            String   @unique
-  discountPercent Int?
-  discountAmount  Float?
-  maxUses         Int?
-  currentUses     Int      @default(0)
-  validFrom       DateTime @default(now())
-  validUntil      DateTime?
-  isActive        Boolean  @default(true)
+  discountPercent Int?     @map("discount_percent")
+  discountAmount  Float?   @map("discount_amount")
+  maxUses         Int?     @map("max_uses")
+  currentUses     Int      @default(0) @map("current_uses")
+  validFrom       DateTime @default(now()) @map("valid_from")
+  validUntil      DateTime? @map("valid_until")
+  isActive        Boolean  @default(true) @map("is_active")
   
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+
+  @@map("coupons")
 }
 
 // ============================================
@@ -172,8 +185,10 @@ model Setting {
   id        String   @id @default(cuid())
   key       String   @unique
   value     String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("settings")
 }
 
 // ============================================
@@ -181,19 +196,21 @@ model Setting {
 // ============================================
 model Notification {
   id          String   @id @default(cuid())
-  userId      String
+  userId      String   @map("user_id")
   title       String
   message     String
-  type        String
-  link        String?
-  data        String?
-  isRead      Boolean  @default(false)
-  readAt      DateTime?
+  type        String   // certificate, payment, system, reminder, achievement
+  link        String?  // رابط للانتقال عند النقر
+  data        String?  // JSON for additional data
+  isRead      Boolean  @default(false) @map("is_read")
+  readAt      DateTime? @map("read_at")
   
   user        User     @relation(fields: [userId], references: [id])
   
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  @@map("notifications")
 }
 
 // ============================================
@@ -201,16 +218,82 @@ model Notification {
 // ============================================
 model AdminLog {
   id          String   @id @default(cuid())
-  adminId     String
-  action      String
-  model       String
-  recordId    String?
-  oldData     String?
-  newData     String?
+  adminId     String   @map("admin_id")
+  action      String   // create, update, delete, login
+  model       String   // User, Certificate, Payment
+  recordId    String?  @map("record_id")
+  oldData     String?  @map("old_data") // JSON
+  newData     String?  @map("new_data") // JSON
   ip          String?
-  userAgent   String?
+  userAgent   String?  @map("user_agent")
   
   admin       User     @relation(fields: [adminId], references: [id])
   
-  createdAt   DateTime @default(now())
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  @@map("admin_logs")
+}
+
+// ============================================
+// البادج (الشارات)
+// ============================================
+model Badge {
+  id              String   @id @default(cuid())
+  name            String
+  nameEn          String   @map("name_en")
+  description     String
+  descriptionEn   String   @map("description_en")
+  icon            String   // اسم الأيقونة
+  color           String   @default("#FFD700") // لون البادج
+  type            String   // first_certificate, certificates_5, certificates_10, all_levels, perfect_score, speed_achievement
+  requirement     String   // JSON يحتوي على متطلبات الحصول على البادج
+  points          Int      @default(0) // النقاط الممنوحة عند الحصول على البادج
+  isActive        Boolean  @default(true) @map("is_active")
+  
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+  
+  userBadges      UserBadge[]
+  
+  @@map("badges")
+}
+
+// ============================================
+// بادج المستخدمين
+// ============================================
+model UserBadge {
+  id          String   @id @default(cuid())
+  userId      String   @map("user_id")
+  badgeId     String   @map("badge_id")
+  earnedAt    DateTime @default(now()) @map("earned_at")
+  
+  user        User     @relation(fields: [userId], references: [id])
+  badge       Badge    @relation(fields: [badgeId], references: [id])
+  
+  createdAt   DateTime @default(now()) @map("created_at")
+  
+  @@unique([userId, badgeId])
+  @@map("user_badges")
+}
+
+// ============================================
+// رسائل التواصل
+// ============================================
+model ContactMessage {
+  id            String    @id @default(cuid())
+  name          String
+  email         String
+  phone         String?
+  subject       String
+  message       String
+  category      String    @default("general") // general, support, partnership, feedback, other
+  status        String    @default("new") // new, read, replied, archived
+  adminNotes    String?   @map("admin_notes")
+  readAt        DateTime? @map("read_at")
+  repliedAt     DateTime? @map("replied_at")
+  
+  createdAt     DateTime  @default(now()) @map("created_at")
+  updatedAt     DateTime  @updatedAt @map("updated_at")
+  
+  @@map("contact_messages")
 }

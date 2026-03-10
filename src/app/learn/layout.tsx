@@ -10,24 +10,40 @@ export const metadata: Metadata = {
     'برمجة عربية',
     'دروس برمجة',
     'شهادات برمجية',
+    'تعلم البرمجة',
+    'Al-Marjaa tutorial',
+    'Arabic programming course',
   ],
   authors: [{ name: 'رضوان دالي حمدوني' }],
   openGraph: {
     title: 'تعلم لغة المرجع | ECERTIFPRO',
-    description: 'منصة تعليمية شاملة لتعلم لغة المرجع - أول لغة برمجة AI-أصيلة بالعربية',
+    description: 'منصة تعليمية شاملة لتعلم لغة المرجع - أول لغة برمجة AI-أصيلة بالعربية. دروس تفاعلية وشهادات معتمدة.',
     url: 'https://ecertifpro.com/learn',
     siteName: 'ECERTIFPRO',
     type: 'website',
     locale: 'ar_SA',
+    images: [
+      {
+        url: '/learn-og.png',
+        width: 1200,
+        height: 630,
+        alt: 'تعلم لغة المرجع - منصة ECERTIFPRO التعليمية',
+      },
+    ],
   },
   twitter: {
     card: 'summary_large_image',
     title: 'تعلم لغة المرجع | ECERTIFPRO',
-    description: 'منصة تعليمية شاملة لتعلم لغة المرجع',
+    description: 'منصة تعليمية شاملة لتعلم لغة المرجع - أول لغة برمجة AI-أصيلة بالعربية',
+    images: ['/learn-og.png'],
     creator: '@almarjaa_lang',
   },
   alternates: {
     canonical: '/learn',
+  },
+  robots: {
+    index: true,
+    follow: true,
   },
 }
 

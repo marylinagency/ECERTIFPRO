@@ -25,7 +25,7 @@ export default function robots(): MetadataRoute.Robots {
         disallow: ['/admin/', '/api/'],
       },
       {
-        userAgent: 'GPTBot',
+        userAgent: 'GPTBot', // OpenAI
         allow: '/',
         disallow: ['/admin/', '/api/', '/checkout/'],
       },
@@ -35,7 +35,7 @@ export default function robots(): MetadataRoute.Robots {
         disallow: ['/admin/', '/api/'],
       },
       {
-        userAgent: 'Claude-Web',
+        userAgent: 'Claude-Web', // Anthropic
         allow: '/',
         disallow: ['/admin/', '/api/'],
       },

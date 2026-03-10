@@ -109,6 +109,97 @@ const almarjaaCertificates = [
 ];
 
 // ============================================
+// البادج - Badges
+// ============================================
+
+const badges = [
+  {
+    id: 'first-certificate',
+    name: 'البداية',
+    nameEn: 'First Steps',
+    description: 'حصلت على شهادتك الأولى',
+    descriptionEn: 'Earned your first certificate',
+    icon: 'Award',
+    color: '#10B981',
+    type: 'first_certificate',
+    requirement: JSON.stringify({ certificates: 1 }),
+    points: 50,
+  },
+  {
+    id: 'five-certificates',
+    name: 'المتعلم',
+    nameEn: 'Learner',
+    description: 'حصلت على 5 شهادات',
+    descriptionEn: 'Earned 5 certificates',
+    icon: 'BookOpen',
+    color: '#3B82F6',
+    type: 'certificates_5',
+    requirement: JSON.stringify({ certificates: 5 }),
+    points: 100,
+  },
+  {
+    id: 'ten-certificates',
+    name: 'الخبير',
+    nameEn: 'Expert',
+    description: 'حصلت على 10 شهادات',
+    descriptionEn: 'Earned 10 certificates',
+    icon: 'Trophy',
+    color: '#8B5CF6',
+    type: 'certificates_10',
+    requirement: JSON.stringify({ certificates: 10 }),
+    points: 200,
+  },
+  {
+    id: 'all-levels',
+    name: 'شامل المستويات',
+    nameEn: 'Level Master',
+    description: 'حصلت على شهادات في جميع المستويات',
+    descriptionEn: 'Earned certificates in all levels',
+    icon: 'Layers',
+    color: '#F59E0B',
+    type: 'all_levels',
+    requirement: JSON.stringify({ levels: ['مبتدئ', 'متوسط', 'متقدم', 'خبير'] }),
+    points: 300,
+  },
+  {
+    id: 'perfect-score',
+    name: 'الدرجة الكاملة',
+    nameEn: 'Perfect Score',
+    description: 'حصلت على 100% في اختبار',
+    descriptionEn: 'Achieved 100% on an exam',
+    icon: 'Star',
+    color: '#EF4444',
+    type: 'perfect_score',
+    requirement: JSON.stringify({ score: 100 }),
+    points: 150,
+  },
+  {
+    id: 'speed-achiever',
+    name: 'سريع الإنجاز',
+    nameEn: 'Speed Achiever',
+    description: 'أكملت اختباراً في أقل من نصف الوقت',
+    descriptionEn: 'Completed an exam in less than half the time',
+    icon: 'Zap',
+    color: '#06B6D4',
+    type: 'speed_achievement',
+    requirement: JSON.stringify({ timeRatio: 0.5 }),
+    points: 75,
+  },
+  {
+    id: 'almarjaa-pioneer',
+    name: 'رائد المرجع',
+    nameEn: 'Al-Marjaa Pioneer',
+    description: 'حصلت على جميع شهادات لغة المرجع',
+    descriptionEn: 'Earned all Al-Marjaa Language certificates',
+    icon: 'Crown',
+    color: '#D4AF37',
+    type: 'almarjaa_all',
+    requirement: JSON.stringify({ certificateIds: ['almarjaa-beginner', 'almarjaa-intermediate', 'almarjaa-advanced', 'almarjaa-professional'] }),
+    points: 500,
+  },
+];
+
+// ============================================
 // أسئلة المستوى المبتدئ - Beginner Questions
 // ============================================
 
@@ -1037,6 +1128,18 @@ async function main() {
   }
   console.log('');
 
+  // إنشاء البادج
+  console.log('🏆 Creating Badges...');
+  for (const badge of badges) {
+    await db.badge.upsert({
+      where: { id: badge.id },
+      update: badge,
+      create: badge,
+    });
+    console.log(`   ✅ ${badge.name} (${badge.type})`);
+  }
+  console.log('');
+
   // إنشاء الأسئلة
   console.log('❓ Creating Questions...');
   
@@ -1149,7 +1252,7 @@ async function main() {
       code: 'LAUNCH50',
       discountPercent: 50,
       maxUses: 100,
-      validUntil: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
+      validUntil: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 يوم
     },
   });
   console.log('✅ Created coupon: LAUNCH50');
@@ -1196,9 +1299,17 @@ async function main() {
   console.log('═══════════════════════════════════════════════════════════');
   console.log('');
   console.log('   🟢 مبتدئ لغة المرجع - 20 سؤال - 30 دقيقة');
-  console.log('   🟡 مطور لغة المرجع - 30 سؤال - 45 دقيقة');
-  console.log('   🟠 خبير لغة المرجع - 40 سؤال - 60 دقيقة');
-  console.log('   🔴 محترف لغة المرجع المعتمد - 50 سؤال - 75 دقيقة');
+  console.log('   🟡 مطور لغة المرجع - 20 سؤال - 45 دقيقة');
+  console.log('   🟠 خبير لغة المرجع - 20 سؤال - 60 دقيقة');
+  console.log('   🔴 محترف لغة المرجع المعتمد - 25 سؤال - 75 دقيقة');
+  console.log('');
+  console.log('═══════════════════════════════════════════════════════════');
+  console.log('   🏆 البادج - Badges');
+  console.log('═══════════════════════════════════════════════════════════');
+  console.log('');
+  badges.forEach(b => {
+    console.log(`   ${b.icon} ${b.name} - ${b.points} نقطة`);
+  });
   console.log('');
   console.log('═══════════════════════════════════════════════════════════');
   console.log('');

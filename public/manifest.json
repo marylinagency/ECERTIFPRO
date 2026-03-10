@@ -16,27 +16,58 @@
       "sizes": "any",
       "type": "image/svg+xml",
       "purpose": "any maskable"
+    },
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
     }
   ],
   "categories": ["education", "productivity", "utilities"],
+  "screenshots": [
+    {
+      "src": "/screenshot-wide.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "الصفحة الرئيسية لمنصة ECERTIFPRO"
+    },
+    {
+      "src": "/screenshot-mobile.png",
+      "sizes": "390x844",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "واجهة التعلم في ECERTIFPRO"
+    }
+  ],
   "shortcuts": [
     {
       "name": "تعلم لغة المرجع",
       "short_name": "التعلم",
       "description": "ابدأ رحلة تعلم لغة المرجع",
-      "url": "/learn"
+      "url": "/learn",
+      "icons": [{ "src": "/logo.svg", "sizes": "any" }]
     },
     {
       "name": "الشهادات",
       "short_name": "الشهادات",
       "description": "عرض شهاداتك المعتمدة",
-      "url": "/certificates"
+      "url": "/certificates",
+      "icons": [{ "src": "/logo.svg", "sizes": "any" }]
     },
     {
       "name": "التحقق من شهادة",
       "short_name": "التحقق",
       "description": "التحقق من صحة الشهادة",
-      "url": "/verify"
+      "url": "/verify",
+      "icons": [{ "src": "/logo.svg", "sizes": "any" }]
     }
-  ]
+  ],
+  "related_applications": [],
+  "prefer_related_applications": false
 }
