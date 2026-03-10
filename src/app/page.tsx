@@ -1323,12 +1323,21 @@ export default function Home() {
 
           {/* Free Coupon Banner */}
           <div className="mt-12 text-center">
-            <div className="inline-flex items-center gap-3 px-6 py-4 bg-gradient-to-r from-yellow-500 to-amber-500 rounded-xl shadow-lg">
-              <Gift className="w-6 h-6 text-white" />
-              <span className="text-white font-medium">
-                استخدم كود <span className="font-bold bg-white/20 px-2 py-1 rounded">MARJAA100</span> للحصول على الشهادات مجاناً!
-              </span>
+            <div className="inline-flex flex-col sm:flex-row items-center gap-3 px-6 py-4 bg-gradient-to-r from-yellow-500 to-amber-500 rounded-xl shadow-lg">
+              <div className="flex items-center gap-3">
+                <Gift className="w-6 h-6 text-white" />
+                <span className="text-white font-medium">
+                  استخدم كود <span className="font-bold bg-white/20 px-2 py-1 rounded">MARJAA100</span> للحصول على الشهادات مجاناً!
+                </span>
+              </div>
+              <div className="flex items-center gap-2 bg-red-500 text-white px-3 py-1 rounded-full text-sm font-bold animate-pulse">
+                <span className="animate-ping absolute inline-flex h-2 w-2 rounded-full bg-white opacity-75"></span>
+                <span>لأول 100 شخص فقط!</span>
+              </div>
             </div>
+            <p className="text-slate-500 dark:text-slate-400 text-sm mt-3">
+              * العرض محدود - بعد استنفاد الكوبونات ستصبح الشهادات بمقابل
+            </p>
           </div>
         </div>
       </section>

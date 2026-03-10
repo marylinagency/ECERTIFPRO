@@ -40,7 +40,7 @@ interface EmailOptions {
 }
 
 // قالب البريد الأساسي
-const getEmailTemplate = (
+export const getEmailTemplate = (
   title: string,
   content: string,
   buttonText?: string,

@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import {
   Award,
@@ -34,7 +34,7 @@ interface CertificateInfo {
   };
 }
 
-export default function VerifyPage() {
+function VerifyContent() {
   const searchParams = useSearchParams();
   const [certificateNumber, setCertificateNumber] = useState('');
   const [certificate, setCertificate] = useState<CertificateInfo | null>(null);
@@ -296,5 +296,17 @@ export default function VerifyPage() {
         </div>
       </main>
     </div>
+  );
+}
+
+export default function VerifyPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-slate-50 dark:bg-slate-900 flex items-center justify-center" dir="rtl">
+        <div className="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin" />
+      </div>
+    }>
+      <VerifyContent />
+    </Suspense>
   );
 }

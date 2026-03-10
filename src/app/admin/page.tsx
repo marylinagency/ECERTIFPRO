@@ -11,7 +11,8 @@ import {
   Award, Users, CreditCard, BarChart3, Settings,
   ChevronLeft, LogOut, LayoutDashboard, Shield,
   TrendingUp, Clock, CheckCircle2, AlertCircle,
-  Menu, X, MessageSquare
+  Menu, X, MessageSquare, Database, Palette, 
+  Globe, Lock
 } from "lucide-react";
 
 // Admin user check
@@ -114,8 +115,12 @@ export default function AdminDashboard() {
     { icon: LayoutDashboard, label: "لوحة التحكم", href: "/admin", active: true },
     { icon: Users, label: "المستخدمين", href: "/admin/users" },
     { icon: Award, label: "الشهادات", href: "/admin/certificates" },
+    { icon: Palette, label: "تصميم الشهادات", href: "/admin/certificates-config" },
     { icon: CreditCard, label: "المدفوعات", href: "/admin/payments" },
-    { icon: BarChart3, label: "التقارير", href: "/admin/reports" },
+    { icon: Globe, label: "إعدادات الدفع", href: "/admin/payment-settings" },
+    { icon: BarChart3, label: "الإحصائيات", href: "/admin/analytics" },
+    { icon: Database, label: "النسخ الاحتياطي", href: "/admin/backup" },
+    { icon: Lock, label: "الأمان", href: "/admin/security" },
     { icon: MessageSquare, label: "الرسائل", href: "/admin/messages" },
     { icon: Settings, label: "الإعدادات", href: "/admin/settings" },
   ];
