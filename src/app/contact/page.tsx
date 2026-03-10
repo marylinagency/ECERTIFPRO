@@ -16,7 +16,8 @@ import {
   CheckCircle,
   ArrowRight,
   MapPin,
-  Globe
+  Globe,
+  Award
 } from 'lucide-react';
 
 const categories = [
@@ -100,10 +101,12 @@ export default function ContactPage() {
         <div className="max-w-6xl mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <Link href="/" className="flex items-center gap-3 hover:opacity-80 transition-opacity">
-              <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-lg">م</span>
+              <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg shadow-blue-500/30">
+                <Award className="w-6 h-6 text-white" />
               </div>
-              <span className="text-xl font-bold">ECERTIFPRO</span>
+              <span className="text-xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
+                ECERTIFPRO
+              </span>
             </Link>
             <Link href="/" className="flex items-center gap-2 text-slate-400 hover:text-white transition-colors">
               <ArrowRight className="w-5 h-5" />

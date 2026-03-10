@@ -47,5 +47,21 @@ test
 prompt
 
 server.log
+
 # Skills directory
 /skills/
+
+# Database
+db/*.db
+db/*.db-journal
+
+# Lock files
+bun.lock
+package-lock.json
+yarn.lock
+
+# Uploads temp
+upload/
+
+# Examples
+examples/
