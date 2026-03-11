@@ -13,7 +13,8 @@
     "db:reset": "prisma migrate reset",
     "db:setup": "node scripts/setup-database.js",
     "db:seed": "prisma db seed",
-    "db:test": "node scripts/test-database.js"
+    "db:test": "node scripts/test-database.js",
+    "db:insert-certs": "node scripts/insert-certificates.js"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",
