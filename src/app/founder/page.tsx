@@ -28,6 +28,7 @@ import {
   GraduationCap,
   Briefcase,
   Flame,
+  ExternalLink,
   Crown,
   Cpu,
   Settings,

@@ -501,7 +501,7 @@ function ExamModal({
                     {result.passed ? 'مبروك! لقد نجحت!' : 'للأسف، لم تنجح هذه المرة'}
                   </h4>
                   <p className="text-slate-400 mb-6">
-                    حصلت على {result.score}% من {result.totalQuestions} سؤا��
+                    حصلت على {result.score}% من {result.totalQuestions} سؤا����
                   </p>
                   <div className="flex items-center justify-center gap-8 mb-8">
                     <div className="text-center">
@@ -863,15 +863,25 @@ export default function Home() {
 
   // Load certificates
   useEffect(() => {
-    fetch('/api/certificates')
-      .then(res => res.json())
-      .then(data => {
-        if (data.success) {
+    const loadCertificates = async () => {
+      try {
+        const res = await fetch('/api/certificates');
+        const data = await res.json();
+        if (data.success && Array.isArray(data.data)) {
           setCertificates(data.data);
+        } else {
+          console.error('[v0] Failed to fetch certificates:', data);
+          setCertificates([]);
         }
+      } catch (error) {
+        console.error('[v0] Error loading certificates:', error);
+        setCertificates([]);
+      } finally {
         setLoading(false);
-      })
-      .catch(() => setLoading(false));
+      }
+    };
+    
+    loadCertificates();
   }, []);
 
   // Al-Marjaa certificates - display ALL active certificates
@@ -1351,21 +1361,28 @@ export default function Home() {
                 <div key={i} className="bg-slate-100 dark:bg-slate-700 rounded-2xl h-96 animate-pulse"></div>
               ))}
             </div>
-          ) : almarjaaCertificates.length === 0 ? (
+          ) : almarjaaCertificates.length === 0 && !loading ? (
             <div className="text-center py-16">
               <Sparkles className="w-12 h-12 text-slate-400 mx-auto mb-4" />
-              <p className="text-slate-600 dark:text-slate-300 text-lg">جاري تحميل الشهادات...</p>
+              <p className="text-slate-600 dark:text-slate-300 text-lg">لا توجد شهادات متاحة حالياً</p>
             </div>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-              {almarjaaCertificates.map((cert) => (
-                <PricingCard
-                  key={cert.id}
-                  certificate={cert}
-                  onSelect={() => startExam(cert)}
-                  featured={cert.featured || cert.level === 'متوسط'}
-                />
-              ))}
+              {almarjaaCertificates.length > 0 ? (
+                almarjaaCertificates.map((cert) => (
+                  <PricingCard
+                    key={cert.id}
+                    certificate={cert}
+                    onSelect={() => startExam(cert)}
+                    featured={cert.featured || cert.level === 'متوسط'}
+                  />
+                ))
+              ) : (
+                <div className="col-span-full text-center py-16">
+                  <Sparkles className="w-12 h-12 text-slate-400 mx-auto mb-4" />
+                  <p className="text-slate-600 dark:text-slate-300 text-lg">جاري تحميل الشهادات...</p>
+                </div>
+              )}
             </div>
           )}
 
