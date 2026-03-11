@@ -369,7 +369,7 @@ export default function FounderPage() {
     {
       icon: Heart,
       title: 'العطاء',
-      description: 'من واجبنا تجاه أمتنا أن نشارك ما نعرفه. أسس رضوان لغة المرجع لتمكين الملايين من الناطقين بالعربية.'
+      description: 'من واجبنا تجاه أمتنا أن نشارك ما نعرفه. أسس رضوان لغة المرجع لتمكين الملاي��ن من الناطقين بالعربية.'
     },
     {
       icon: Target,
@@ -514,6 +514,15 @@ export default function FounderPage() {
                   <Github className="w-5 h-5" />
                   <span>لغة المرجع على GitHub</span>
                 </a>
+                <a
+                  href="https://www.academia.edu/165043017/Al_Marjaa_An_AI_Native_Arabic_Programming_Language_for_Modern_Software_Development_%D9%84%D8%AA%D8%B7%D9%88%D9%8A%D8%B1_%D8%A7%D8%AA%D8%B5%D8%B7%D9%86%D8%A7%D8%B9%D9%8A_%D8%A7%D9%84%D8%B0%D9%83%D8%A7%D8%A1_%D9%85%D8%B9_%D9%85%D8%AA%D9%83%D8%A7%D9%85%D9%84%D8%A9_%D8%B9%D8%B1%D8%A8%D9%8A%D8%A9_%D8%A8%D8%B1%D9%85%D8%AC%D8%A9_%D9%84%D8%BA%D8%A9_%D8%A7%D9%84%D9%85%D8%B1%D8%AC%D8%B9_%D8%A7%D9%84%D8%AD%D8%AF%D9%8A%D8%AB%D8%A9_%D8%A7%D9%84%D8%A8%D8%B1%D9%85%D8%AC%D9%8A%D8%A7%D8%AA"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="px-8 py-4 bg-slate-800 text-white border border-slate-700 rounded-xl font-bold text-lg hover:bg-slate-700 transition-all flex items-center gap-2"
+                >
+                  <ExternalLink className="w-5 h-5" />
+                  <span>الورقة البحثية</span>
+                </a>
               </div>
             </div>
 
@@ -648,7 +657,7 @@ export default function FounderPage() {
               </span>
             </h2>
             <p className="text-slate-400 max-w-3xl mx-auto">
-              الجمع بين هذه المجالات المتعددة هو ما مكّنه من إنشاء لغة برمجة كاملة بمجهود فردي
+              الجمع بين هذه المجالات المتعددة هو ما مكّ��ه من إنشاء لغة برمجة كاملة بمجهود فردي
             </p>
           </div>
 
