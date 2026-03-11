@@ -402,7 +402,7 @@ const intermediateQuestions = [
     certificateId: 'almarjaa-intermediate',
     question: 'كيف تُكتب حلقة تكرار من 1 إلى 10؟',
     options: JSON.stringify([
-      'لكل رقم في مدى(1، 10) { }',
+      'لكل رق�� في مدى(1، 10) { }',
       'for i in range(1, 10):',
       'for (i = 1; i <= 10; i++) { }',
       'loop i from 1 to 10:'
@@ -1084,36 +1084,49 @@ async function main() {
   console.log('');
 
   // إنشاء المستخدم الإداري
-  const adminPassword = await bcrypt.hash('admin123', SALT_ROUNDS);
+  // Admin Email: admin@ecertif.pro
+  // Admin Password: AdminSecure@2024
+  const adminPassword = await bcrypt.hash('AdminSecure@2024', SALT_ROUNDS);
   const admin = await db.user.upsert({
-    where: { email: 'admin@ecertifpro.com' },
+    where: { email: 'admin@ecertif.pro' },
     update: {},
     create: {
-      email: 'admin@ecertifpro.com',
-      name: 'المشرف',
+      email: 'admin@ecertif.pro',
+      name: 'المشرف العام',
       password: adminPassword,
       role: 'admin',
       level: 'خبير',
       points: 1000,
+      emailVerified: new Date(),
+      isActive: true,
     },
   });
-  console.log(`✅ Created admin user: ${admin.email}`);
+  console.log(`✅ Admin User Created:`);
+  console.log(`   📧 Email: ${admin.email}`);
+  console.log(`   🔐 Password: AdminSecure@2024`);
+  console.log('');
 
   // إنشاء مستخدم تجريبي
-  const demoPassword = await bcrypt.hash('demo123', SALT_ROUNDS);
+  // Demo Email: user@test.com
+  // Demo Password: TestUser123
+  const demoPassword = await bcrypt.hash('TestUser123', SALT_ROUNDS);
   const demoUser = await db.user.upsert({
-    where: { email: 'demo@ecertifpro.com' },
+    where: { email: 'user@test.com' },
     update: {},
     create: {
-      email: 'demo@ecertifpro.com',
-      name: 'المتعلم التجريبي',
+      email: 'user@test.com',
+      name: 'مستخدم اختبار',
       password: demoPassword,
       role: 'user',
       level: 'مبتدئ',
       points: 0,
+      emailVerified: new Date(),
+      isActive: true,
     },
   });
-  console.log(`✅ Created demo user: ${demoUser.email}`);
+  console.log(`✅ Test User Created:`);
+  console.log(`   📧 Email: ${demoUser.email}`);
+  console.log(`   🔐 Password: TestUser123`);
   console.log('');
 
   // إنشاء شهادات لغة المرجع
